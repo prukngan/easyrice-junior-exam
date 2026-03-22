@@ -60,7 +60,4 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 *.dbml
 *.dbdiagram
 
-data/
-example/
-
 EASYRICE_Junior_Exam _Rice_Inspection_App*
