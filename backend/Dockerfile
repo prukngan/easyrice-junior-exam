@@ -27,5 +27,5 @@ RUN npm run build
 # Expose backend port (updated to 8000 to match docker-compose change)
 EXPOSE 8000
 
-# Start the application: Run migrations/seed then start the app
-CMD npx prisma db push && npx prisma db seed && npm run start:prod
+# Start the application: Run migrations/seed then start the app in DEV mode
+CMD npx prisma db push && npx prisma db seed && npm run start:dev
