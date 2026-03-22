@@ -1,0 +1,366 @@
+swagger: '2.0'
+info:
+  version: 1.0.1
+  title: '@fastify/swagger'
+definitions: {}
+paths:
+  /history/{id}:
+    get:
+      parameters:
+        - type: string
+          required: true
+          in: path
+          name: id
+      responses:
+        '200':
+          description: Default Response
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              createDate:
+                type: string
+                format: date-time
+              inspectionID:
+                type: string
+              standardID:
+                type: string
+              note:
+                type: string
+              standardName:
+                type: string
+              samplingDate:
+                type: string
+                format: date-time
+              samplingPoint:
+                type: array
+                items:
+                  type: string
+              price:
+                type: number
+              imageLink:
+                type: string
+              standardData:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    key:
+                      type: string
+                    minLength:
+                      type: number
+                    maxLength:
+                      type: number
+                    shape:
+                      type: array
+                      items:
+                        type: string
+                    name:
+                      type: string
+                    conditionMin:
+                      type: string
+                      enum:
+                        - GE
+                        - LE
+                        - GT
+                        - LT
+                        - EQ
+                        - NE
+                    conditionMax:
+                      type: string
+                      enum:
+                        - GE
+                        - LE
+                        - GT
+                        - LT
+                        - EQ
+                        - NE
+                    value:
+                      type: number
+                  required:
+                    - shape
+                  additionalProperties: false
+            required:
+              - standardData
+            additionalProperties: false
+  /history:
+    get:
+      parameters:
+        - type: string
+          required: true
+          in: query
+          name: fromDate
+        - type: string
+          required: true
+          in: query
+          name: toDate
+        - type: string
+          required: true
+          in: query
+          name: inspectionID
+      responses:
+        '200':
+          description: Default Response
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    createDate:
+                      type: string
+                      format: date-time
+                    inspectionID:
+                      type: string
+                    standardID:
+                      type: string
+                    note:
+                      type: string
+                    standardName:
+                      type: string
+                    samplingDate:
+                      type: string
+                      format: date-time
+                    samplingPoint:
+                      type: array
+                      items:
+                        type: string
+                    price:
+                      type: number
+                  additionalProperties: false
+            required:
+              - data
+            additionalProperties: false
+    post:
+      parameters:
+        - name: body
+          in: body
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              createDate:
+                type: string
+                format: date-time
+              imageLink:
+                type: string
+              inspectionID:
+                type: string
+              standardID:
+                type: string
+              note:
+                type: string
+              standardName:
+                type: string
+              samplingDate:
+                type: string
+                format: date-time
+              samplingPoint:
+                type: array
+                items:
+                  type: string
+              price:
+                type: number
+              standardData:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    key:
+                      type: string
+                    minLength:
+                      type: number
+                    maxLength:
+                      type: number
+                    shape:
+                      type: array
+                      items:
+                        type: string
+                    name:
+                      type: string
+                    conditionMin:
+                      type: string
+                      enum:
+                        - GE
+                        - LE
+                        - GT
+                        - LT
+                        - EQ
+                        - NE
+                    conditionMax:
+                      type: string
+                      enum:
+                        - GE
+                        - LE
+                        - GT
+                        - LT
+                        - EQ
+                        - NE
+                    value:
+                      type: number
+                  required:
+                    - shape
+                  additionalProperties: false
+            required:
+              - standardData
+            additionalProperties: false
+      responses:
+        '200':
+          description: Default Response
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              createDate:
+                type: string
+                format: date-time
+              inspectionID:
+                type: string
+              standardID:
+                type: string
+              note:
+                type: string
+              standardName:
+                type: string
+              samplingDate:
+                type: string
+                format: date-time
+              samplingPoint:
+                type: array
+                items:
+                  type: string
+              price:
+                type: number
+              imageLink:
+                type: string
+              standardData:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    key:
+                      type: string
+                    minLength:
+                      type: number
+                    maxLength:
+                      type: number
+                    shape:
+                      type: array
+                      items:
+                        type: string
+                    name:
+                      type: string
+                    conditionMin:
+                      type: string
+                      enum:
+                        - GE
+                        - LE
+                        - GT
+                        - LT
+                        - EQ
+                        - NE
+                    conditionMax:
+                      type: string
+                      enum:
+                        - GE
+                        - LE
+                        - GT
+                        - LT
+                        - EQ
+                        - NE
+                    value:
+                      type: number
+                  required:
+                    - shape
+                  additionalProperties: false
+            required:
+              - standardData
+            additionalProperties: false
+    delete:
+      parameters:
+        - name: body
+          in: body
+          schema:
+            type: object
+            properties:
+              inspectionID:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+      responses:
+        '200':
+          description: Default Response
+          schema:
+            type: string
+  /standard:
+    get:
+      responses:
+        '200':
+          description: Default Response
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    id:
+                      type: string
+                    createDate:
+                      type: string
+                      format: date-time
+                    standardName:
+                      type: string
+                    standardData:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          key:
+                            type: string
+                          minLength:
+                            type: number
+                          maxLength:
+                            type: number
+                          shape:
+                            type: array
+                            items:
+                              type: string
+                          name:
+                            type: string
+                          conditionMin:
+                            type: string
+                            enum:
+                              - GE
+                              - LE
+                              - GT
+                              - LT
+                              - EQ
+                              - NE
+                          conditionMax:
+                            type: string
+                            enum:
+                              - GE
+                              - LE
+                              - GT
+                              - LT
+                              - EQ
+                              - NE
+                        required:
+                          - shape
+                        additionalProperties: false
+                  additionalProperties: false
+            required:
+              - data
+            additionalProperties: false

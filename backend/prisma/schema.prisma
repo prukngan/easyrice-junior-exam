@@ -1,0 +1,192 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider   = "postgresql"
+  extensions = [citext]
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+// ─────────────────────────────────────────────
+// STANDARD
+// ─────────────────────────────────────────────
+
+model Standard {
+  id           String        @id @default(cuid())
+  name         String
+  createDate   DateTime      @default(now()) @map("create_date")
+  standardData SubStandard[]
+
+  // Relations
+  inspections  Inspection[]
+  @@map("standards")
+}
+
+model SubStandard {
+  id            String     @id @default(cuid())
+  key           String
+  name          String
+
+  maxLength     Float      @map("max_length")
+  minLength     Float      @map("min_length")
+
+  conditionMax  Condition  @map("condition_max")
+  conditionMin  Condition  @map("condition_min")
+
+  shapes        Shape[]
+
+  standardId    String     @map("standard_id")
+  standard      Standard   @relation(fields: [standardId], references: [id], onDelete: Cascade)
+
+  @@unique([standardId, key])
+  @@index([standardId])
+  @@map("sub_standards")
+}
+
+// ─────────────────────────────────────────────
+// INSPECTION (History)
+// ─────────────────────────────────────────────
+
+model Inspection {
+  id              String          @id
+  name            String
+  note            String?
+
+  price           Decimal?        @db.Decimal(10, 2)
+  samplingAt      DateTime?       @map("sampling_at")
+  samplingPoints  SamplingPoint[] @map("sampling_points")
+
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
+
+  standardId      String          @map("standard_id")
+  standard        Standard        @relation(fields: [standardId], references: [id])
+
+  totalSample       Int?            @map("total_sample")
+  totalWeight       Float?          @map("total_weight")
+  totalDefectWeight Float?          @map("total_defect_weight")
+
+  compositions    CompositionResult[]
+  defects         DefectResult[]
+  rawRices        RawRice[]
+
+  @@index([standardId])
+  @@map("inspections")
+}
+
+model Counter {
+  name      String @id // กำหนดชื่อเช่น "inspection_number"
+  lastValue Int    @default(0) @map("last_value")
+
+  @@map("counter")
+}
+
+// ─────────────────────────────────────────────
+// RAW DATA (เพิ่มให้ system complete)
+// ─────────────────────────────────────────────
+
+model RawRice {
+  id            String   @id @default(cuid())
+  length        Float
+  weight        Float
+
+  shape         Shape
+  type          RiceType
+
+  inspectionId  String   @map("inspection_id")
+  inspection    Inspection @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+
+  @@index([inspectionId])
+  @@map("raw_rices")
+}
+
+// ─────────────────────────────────────────────
+// COMPOSITION
+// shape-based classification per subStandard
+// ─────────────────────────────────────────────
+
+model CompositionResult {
+  id                 String   @id @default(cuid())
+
+  // ─────────────────────── raw data ───────────────────────
+  weightGrams        Float    @map("weight_grams")
+  percentage         Float
+
+  // ──────────── subStandard from raw data ────────────────
+  subStandardKey     String   @map("sub_standard_key")
+  subStandardName    String   @map("sub_standard_name")
+
+  minLength          Float    @map("min_length")
+  maxLength          Float    @map("max_length")
+
+  conditionMin       Condition @map("condition_min")
+  conditionMax       Condition @map("condition_max")
+
+
+  inspectionId       String   @map("inspection_id")
+  inspection         Inspection @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+
+  @@index([inspectionId])
+  @@map("composition_results")
+}
+
+// ─────────────────────────────────────────────
+// DEFECT
+// ─────────────────────────────────────────────
+
+model DefectResult {
+  id                 String   @id @default(cuid())
+
+  type               RiceType
+  weightGrams        Float    @map("weight_grams")
+  percentage         Float
+
+  inspectionId       String   @map("inspection_id")
+  inspection         Inspection @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+
+  @@index([inspectionId])
+  @@map("defect_results")
+}
+
+
+// ─────────────────────────────────────────────
+// ENUMS
+// ─────────────────────────────────────────────
+
+// Grain shape (used in subStandard classification)
+enum Shape {
+  wholegrain  // ข้าวเต็มเมล็ด
+  broken      // ข้าวหัก
+}
+
+// Comparison operator for length conditions
+enum Condition {
+  LT  // Less than
+  LE  // Less than or equal
+  GT  // Greater than
+  GE  // Greater than or equal
+}
+
+// Sampling point checkboxes on the create form
+enum SamplingPoint {
+  FRONT_END @map("Front End")
+  BACK_END  @map("Back End")
+  OTHER     @map("Other")
+}
+
+// Grain defect types (type field in raw.json)
+// "total" is a computed aggregate of all non-white types
+enum RiceType {
+  white
+  yellow
+  red
+  damage
+  paddy
+  chalky
+  glutinous
+  undermilled
+}
